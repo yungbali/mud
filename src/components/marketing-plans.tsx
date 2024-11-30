@@ -29,20 +29,15 @@ export function MarketingPlans() {
   };
 
   const handleSubmit = async () => {
-    const now = new Date().toISOString();
     await createPlan({
-      artistId: [formData.artist_name],
-      goals: [formData.goals],
-      timeline: [formData.timeline],
-      budget: parseFloat(formData.budget),
-      channels: [formData.channels],
-      assets: [formData.assets],
-      additionalInformation: [formData.additional_information],
-      status: 'DRAFT',
-      createdAt: now,
-      updatedAt: now,
-      genre: [formData.genre],
-      target_audience: [formData.target_audience]
+      artistId: [formData.artist_name || ''],
+      goals: [formData.goals || ''],
+      timeline: [formData.timeline || ''],
+      budget: [formData.budget || '0'],
+      channels: [formData.channels || ''],
+      assets: [formData.assets || ''],
+      additionalInformation: [formData.additional_information || ''],
+      status: ['DRAFT']
     });
   };
 
