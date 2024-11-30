@@ -1,35 +1,45 @@
-import { useState, useEffect } from "react";
+import { models } from '../lib/amplify';
 import type { Schema } from "../../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
-
-const client = generateClient<Schema>();
+import { useState } from 'react';
 
 export function useReviews() {
-  const [reviews, setReviews] = useState<Schema["Review"]["type"][]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const sub = client.models.Review.observeQuery().subscribe({
-      next: ({ items }) => {
-        setReviews([...items]);
-      },
-      error: (err) => setError(err.message),
-    });
-
-    return () => sub.unsubscribe();
-  }, []);
-
-  const createReview = async (reviewData: Omit<Schema["Review"]["type"], "id">) => {
+  async function createReview(reviewData: Omit<Schema["Review"]["type"], "id">) {
     setLoading(true);
     try {
-      await client.models.Review.create(reviewData);
+      const review = await models.Review.create(reviewData);
+      return review;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Failed to create review');
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  return { reviews, loading, error, createReview };
+  async function listReviews() {
+    try {
+      return await models.Review.list();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch reviews');
+      throw err;
+    }
+  }
+
+  function subscribeToReviews(callback: (reviews: Schema["Review"]["type"][]) => void) {
+    return models.Review.observeQuery().subscribe({
+      next: ({ items }) => callback(items),
+      error: (err) => setError(err.message)
+    });
+  }
+
+  return {
+    createReview,
+    listReviews,
+    subscribeToReviews,
+    loading,
+    error
+  };
 } 

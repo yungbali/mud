@@ -1,26 +1,27 @@
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import AppFlow from './app-flow';
-import {Route, Routes,BrowserRouter} from 'react-router-dom';
-import { Amplify } from 'aws-amplify';
-import config from '../amplify_outputs.json';
-
-import './App.css'
 import LoginScreen from './components/login';
 import SignupScreen from './components/signup';
-
-// Configure Amplify with the generated outputs
-Amplify.configure(config);
+import { ProtectedRoute } from './components/ProtectedRoute';
+import './App.css';
 
 function App() {
-
   return (
-      <BrowserRouter>
+    <BrowserRouter>
       <Routes>
-        <Route path='/' element={<AppFlow />} />
-        <Route path='/signup' element={<SignupScreen />} />
-        <Route path='/login' element={<LoginScreen />} />
+        <Route path="/login" element={<LoginScreen />} />
+        <Route path="/signup" element={<SignupScreen />} />
+        <Route 
+          path="/" 
+          element={
+            <ProtectedRoute>
+              <AppFlow />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
-      </BrowserRouter>
-  )
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

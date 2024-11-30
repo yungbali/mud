@@ -1,35 +1,45 @@
-import { useState, useEffect } from "react";
+import { models } from '../lib/amplify';
 import type { Schema } from "../../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
-
-const client = generateClient<Schema>();
+import { useState } from 'react';
 
 export function useArtists() {
-  const [artists, setArtists] = useState<Schema["Artist"]["type"][]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const sub = client.models.Artist.observeQuery().subscribe({
-      next: ({ items }) => {
-        setArtists([...items]);
-      },
-      error: (err) => setError(err.message),
-    });
-
-    return () => sub.unsubscribe();
-  }, []);
-
-  const createArtist = async (artistData: Omit<Schema["Artist"]["type"], "id">) => {
+  async function createArtist(artistData: Omit<Schema["Artist"]["type"], "id">) {
     setLoading(true);
     try {
-      await client.models.Artist.create(artistData);
+      const artist = await models.Artist.create(artistData);
+      return artist;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Failed to create artist');
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  return { artists, loading, error, createArtist };
+  async function getArtist(id: string) {
+    try {
+      return await models.Artist.get({ id });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch artist');
+      throw err;
+    }
+  }
+
+  function subscribeToArtists(callback: (artists: Schema["Artist"]["type"][]) => void) {
+    return models.Artist.observeQuery().subscribe({
+      next: ({ items }) => callback(items),
+      error: (err) => setError(err.message)
+    });
+  }
+
+  return {
+    createArtist,
+    getArtist,
+    subscribeToArtists,
+    loading,
+    error
+  };
 } 

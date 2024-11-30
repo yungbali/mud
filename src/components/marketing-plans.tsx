@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { marketingPlanService } from '../hooks/useMarketingPlans';
+import { useMarketingPlans } from '../hooks/useMarketingPlans';
 import type { Schema } from "../../amplify/data/resource";
 import MarkDownDisplay from './react-markdown';
 import MarketingPlansForm from './marketing-plans-form';
@@ -8,19 +8,20 @@ import { Button } from "./ui/button";
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog';
 
 export function MarketingPlans() {
+  const { createPlan, listUserPlans } = useMarketingPlans();
   const [plans, setPlans] = useState<Schema["MarketingPlan"]["type"][]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    goals: '',
-    artist_name: '',
-    genre: '',
-    target_audience: '',
-    additional_information: '',
-    assets: '',
-    budget: '',
-    channels: '',
-    timeline: ''
+    goals: [''],
+    artist_name: [''],
+    genre: [''],
+    target_audience: [''],
+    additional_information: [''],
+    assets: [''],
+    budget: ['0'],
+    channels: [''],
+    timeline: ['']
   });
   const [generatedPlan, setGeneratedPlan] = useState('');
 
@@ -30,36 +31,53 @@ export function MarketingPlans() {
 
   const loadPlans = async () => {
     try {
-      const { data } = await marketingPlanService.listPlans();
-      setPlans(data);
+      const result = await listUserPlans();
+      if (result.errors) {
+        throw new Error(result.errors[0]?.message || 'Failed to load plans');
+      }
+      setPlans(result.data as Schema["MarketingPlan"]["type"][]);
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error loading plans:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred loading plans');
+      setPlans([]);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
-      [e.target.id]: e.target.value
+      [e.target.id]: [e.target.value]
     }));
   };
 
   const handleSubmit = async () => {
     setLoading(true);
+    setError(null);
     try {
-      await marketingPlanService.createPlan({
-        artistId: [formData.artist_name],
-        goals: [formData.goals],
-        timeline: [formData.timeline],
-        budget: [formData.budget],
-        channels: [formData.channels],
-        assets: [formData.assets],
-        additionalInformation: [formData.additional_information],
+      const result = await createPlan({
+        ...formData,
+        additionalInformation: [formData.additional_information[0]],
         status: ['DRAFT']
       });
-      await loadPlans(); // Refresh the list after creating
+      if (result.errors) {
+        throw new Error(result.errors[0]?.message || 'Unknown error occurred');
+      }
+      await loadPlans();
+      setFormData({
+        goals: [''],
+        artist_name: [''],
+        genre: [''],
+        target_audience: [''],
+        additional_information: [''],
+        assets: [''],
+        budget: ['0'],
+        channels: [''],
+        timeline: ['']
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error creating plan:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred creating the plan');
     } finally {
       setLoading(false);
     }
@@ -78,7 +96,17 @@ export function MarketingPlans() {
             data={generatedPlan}
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
-            prompt={formData}
+            prompt={{
+              goals: formData.goals[0],
+              artist_name: formData.artist_name[0],
+              genre: formData.genre[0],
+              target_audience: formData.target_audience[0],
+              additional_information: formData.additional_information[0],
+              assets: formData.assets[0],
+              budget: formData.budget[0],
+              channels: formData.channels[0],
+              timeline: formData.timeline[0]
+            }}
           />
           <AlertDialogCancel>Cancel</AlertDialogCancel>
         </AlertDialogContent>
