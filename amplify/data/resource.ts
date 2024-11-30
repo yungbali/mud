@@ -1,6 +1,21 @@
 import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
 
 const schema = a.schema({
+  MarketingPlan: a
+    .model({
+      artistId: a.string(),
+      goals: a.string(),
+      timeline: a.string(),
+      budget: a.float(),
+      channels: a.string(),
+      assets: a.string(),
+      additionalInformation: a.string(),
+      status: a.enum(['DRAFT', 'ACTIVE', 'COMPLETED']),
+      createdAt: a.datetime(),
+      updatedAt: a.datetime(),
+    })
+    .authorization(allow => [allow.publicApiKey()]),
+
   Artist: a
     .model({
       name: a.string(),
@@ -14,19 +29,8 @@ const schema = a.schema({
       musicLinks: a.string(),
       achievements: a.string(),
       contactInformation: a.string(),
-    })
-    .authorization(allow => [allow.publicApiKey()]),
-
-  MarketingPlan: a
-    .model({
-      artistId: a.string(),
-      goals: a.string(),
-      timeline: a.string(),
-      budget: a.float(),
-      channels: a.string(),
-      assets: a.string(),
-      additionalInformation: a.string(),
-      status: a.enum(['DRAFT', 'ACTIVE', 'COMPLETED']),
+      createdAt: a.datetime(),
+      updatedAt: a.datetime(),
     })
     .authorization(allow => [allow.publicApiKey()]),
 
@@ -35,6 +39,8 @@ const schema = a.schema({
       name: a.string(),
       message: a.string(),
       rating: a.integer(),
+      createdAt: a.datetime(),
+      updatedAt: a.datetime(),
     })
     .authorization(allow => [allow.publicApiKey()]),
 });

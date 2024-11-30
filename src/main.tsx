@@ -5,7 +5,8 @@ import outputs from '../amplify_outputs.json'
 import App from './App'
 import './index.css'
 
-Amplify.configure(outputs);
+// Configure Amplify with the outputs from your backend
+Amplify.configure(outputs)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
