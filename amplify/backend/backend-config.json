@@ -1,4 +1,20 @@
 {
+  "api": {
+    "marketingApi": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "mud933c2c86"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
   "auth": {
     "mud419945f8": {
       "customAuth": false,
@@ -25,6 +41,71 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    }
+  },
+  "function": {
+    "marketingplansTrigger5db5dcd9": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "marketingplans"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "mud933c2c86": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributeEnvMap": {
+            "Arn": "TABLE_ARN",
+            "Name": "TABLE_NAME"
+          },
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "storage",
+          "resourceName": "dynamo9a937e54"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_mud933c2c86_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "mud933c2c86"
+        }
+      ]
+    },
+    "AMPLIFY_function_mud933c2c86_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "mud933c2c86"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "dynamo9a937e54": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
+    },
+    "marketingplans": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
     }
   }
 }

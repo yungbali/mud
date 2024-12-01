@@ -1,0 +1,10 @@
+{
+  "resourceName": "dynamo9a937e54",
+  "tableName": "dynamo9a937e54",
+  "partitionKey": {
+    "fieldName": "plans",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}

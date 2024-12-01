@@ -1,0 +1,28 @@
+{
+  "resourceName": "marketingplans",
+  "tableName": "marketingplans",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "userId",
+    "fieldType": "string"
+  },
+  "gsi": [
+    {
+      "name": "byUser",
+      "partitionKey": {
+        "fieldName": "userId",
+        "fieldType": "string"
+      },
+      "sortKey": {
+        "fieldName": "createdAt",
+        "fieldType": "string"
+      }
+    }
+  ],
+  "triggerFunctions": [
+    "marketingplansTrigger"
+  ]
+}

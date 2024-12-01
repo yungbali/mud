@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/marketing-plans": {
+      "name": "/marketing-plans",
+      "lambdaFunction": "mud933c2c86",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
