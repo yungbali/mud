@@ -120,7 +120,7 @@ const useEpkGenerator = () => {
       formData.append('image', prompt.profile_picture[0]);
     }
     
-    for (const pair of formData.entries()) {
+    for (const pair of Array.from(formData.entries())) {
       console.log(pair[0], pair[1]);
     }
 

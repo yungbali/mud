@@ -4,7 +4,7 @@ export interface ApiResponse<T> {
   data: T | null;
   errors?: Array<{
     message: string;
-  }>;
+  }> | null;
 }
 
 export interface MarketingPlanResponse {

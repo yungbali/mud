@@ -112,7 +112,7 @@ export function useMarketingPlans() {
     }
   }
 
-  async function listUserPlans() {
+  async function listUserPlans(): Promise<ApiResponse<Schema["MarketingPlan"]["type"][]>> {
     setLoading(true);
     try {
       const user = await getCurrentUser();
@@ -123,7 +123,6 @@ export function useMarketingPlans() {
           }
         }
       });
-      if (errors) throw new Error(errors[0].message);
       return { data: items, errors };
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load plans');

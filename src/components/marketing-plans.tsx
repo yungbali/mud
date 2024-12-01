@@ -54,7 +54,9 @@ export function MarketingPlans() {
   const handleSubmit = async () => {
     try {
       const result = await createPlan({
-        ...formData
+        ...formData,
+        additionalInformation: formData.additional_information || [],
+        status: ['DRAFT']
       });
       if (result.errors?.length) {
         throw new Error(result.errors[0]?.message ?? 'Unknown error occurred');
