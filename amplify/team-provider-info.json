@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-mud-dev-46ac8-authRole",
+      "UnauthRoleArn": "arn:aws:iam::683481185913:role/amplify-mud-dev-46ac8-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::683481185913:role/amplify-mud-dev-46ac8-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-mud-dev-46ac8-deployment",
+      "UnauthRoleName": "amplify-mud-dev-46ac8-unauthRole",
+      "StackName": "amplify-mud-dev-46ac8",
+      "StackId": "arn:aws:cloudformation:us-west-2:683481185913:stack/amplify-mud-dev-46ac8/15a8d5c0-af9c-11ef-b2a5-02507d764e93",
+      "AmplifyAppId": "d3ti9yeb8hdkgy"
+    },
+    "categories": {
+      "auth": {
+        "mud419945f8": {}
+      }
+    }
+  }
+}
