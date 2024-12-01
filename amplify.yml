@@ -1,0 +1,23 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - amplify push --yes
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm use 20
+        - npm install
+        - echo '{"API":{"GraphQL":{"ApiId":"temp","ApiUrl":"temp"}}}' > amplify_outputs.json
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/* 
