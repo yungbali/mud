@@ -39,7 +39,7 @@ export default function PlanDetails({ planId, onUpdate }: PlanDetailsProps) {
           setPlan({
             goals: ensureArray(response.data.goals),
             timeline: ensureArray(response.data.timeline),
-            budget: ensureArray(response.data.budget?.toString() || '0'),
+            budget: ensureArray(response.data.budget?.toString()),
             channels: ensureArray(response.data.channels),
             assets: ensureArray(response.data.assets),
             additionalInformation: ensureArray(response.data.additionalInformation),
@@ -53,7 +53,7 @@ export default function PlanDetails({ planId, onUpdate }: PlanDetailsProps) {
     loadPlan();
   }, [planId]);
 
-  const ensureArray = (value: string | string[] | undefined): string[] => {
+  const ensureArray = (value: string | string[] | null | undefined): string[] => {
     if (Array.isArray(value)) return value;
     if (!value) return [''];
     return [value];

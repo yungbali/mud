@@ -2,6 +2,7 @@ import { models } from '../lib/amplify';
 import type { Schema } from "../../amplify/data/resource";
 import { useState } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
+import { ApiResponse, MarketingPlanResponse } from '../types/api';
 
 type PlanStatus = 'DRAFT' | 'ACTIVE' | 'COMPLETED';
 
@@ -38,16 +39,36 @@ export function useMarketingPlans() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function createPlan(planData: MarketingPlanInput) {
+  async function createPlan(planData: MarketingPlanInput): Promise<ApiResponse<MarketingPlanResponse>> {
     setLoading(true);
     try {
       const user = await getCurrentUser();
-      const { data, errors } = await models.MarketingPlan.create({
+      const response = await models.MarketingPlan.create({
         ...planData,
-        artistId: [user.userId]
+        artistId: user.userId,
+        goals: planData.goals[0],
+        timeline: planData.timeline[0],
+        budget: parseFloat(planData.budget[0]),
+        channels: planData.channels[0],
+        assets: planData.assets[0],
+        additionalInformation: planData.additionalInformation[0],
+        status: planData.status[0]
       });
+      const { data, errors } = response;
       if (errors) throw new Error(errors[0].message);
-      return { data, errors };
+      if (!data) throw new Error('No data returned');
+      const transformedData: MarketingPlanResponse = {
+        id: data.id,
+        artistId: data.artistId || '',
+        goals: [data.goals || ''],
+        timeline: [data.timeline || ''],
+        budget: [data.budget?.toString() || ''],
+        channels: [data.channels || ''],
+        assets: [data.assets || ''],
+        additionalInformation: [data.additionalInformation || ''],
+        status: [data.status || 'DRAFT']
+      };
+      return { data: transformedData, errors };
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create plan');
       throw err;

@@ -32,8 +32,8 @@ export function MarketingPlans() {
   const loadPlans = async () => {
     try {
       const result = await listUserPlans();
-      if (result.errors) {
-        throw new Error(result.errors[0]?.message || 'Failed to load plans');
+      if (result.errors?.length) {
+        throw new Error(result.errors[0]?.message ?? 'Failed to load plans');
       }
       setPlans(result.data as Schema["MarketingPlan"]["type"][]);
       setError(null);
@@ -52,16 +52,12 @@ export function MarketingPlans() {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
-    setError(null);
     try {
       const result = await createPlan({
-        ...formData,
-        additionalInformation: [formData.additional_information[0]],
-        status: ['DRAFT']
+        ...formData
       });
-      if (result.errors) {
-        throw new Error(result.errors[0]?.message || 'Unknown error occurred');
+      if (result.errors?.length) {
+        throw new Error(result.errors[0]?.message ?? 'Unknown error occurred');
       }
       await loadPlans();
       setFormData({
@@ -76,10 +72,7 @@ export function MarketingPlans() {
         timeline: ['']
       });
     } catch (err) {
-      console.error('Error creating plan:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred creating the plan');
-    } finally {
-      setLoading(false);
+      console.error('Failed to create plan:', err);
     }
   };
 

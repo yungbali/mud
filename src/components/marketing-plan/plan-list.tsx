@@ -32,8 +32,8 @@ export default function MarketingPlanList({ onPlanSelect }: PlanListProps) {
   const loadPlans = async () => {
     try {
       const result = await listUserPlans();
-      if (result.errors) {
-        throw new Error(result.errors[0]?.message || 'Failed to load plans');
+      if (result.errors?.length) {
+        throw new Error(result.errors[0]?.message ?? 'Failed to load plans');
       }
       setPlans(result.data || []);
     } catch (err) {
@@ -81,7 +81,9 @@ export default function MarketingPlanList({ onPlanSelect }: PlanListProps) {
 
               <div>
                 <h4 className="font-medium">Budget</h4>
-                <p className="text-sm text-gray-600">${parseFloat(plan.budget?.[0] || '0').toFixed(2)}</p>
+                <p className="text-sm text-gray-600">
+                  ${parseFloat(Array.isArray(plan.budget) ? plan.budget[0] || '0' : plan.budget || '0').toFixed(2)}
+                </p>
               </div>
 
               <div className="flex justify-end space-x-2">

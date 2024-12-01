@@ -1,3 +1,2 @@
-declare module "@/lib/utils" {
-  export function cn(...inputs: string[]): string;
-}
+import { type ClassValue } from "clsx";
+export declare function cn(...inputs: ClassValue[]): string;
