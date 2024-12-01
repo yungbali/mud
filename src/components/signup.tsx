@@ -23,7 +23,7 @@ export default function SignupScreen() {
     e.preventDefault();
     const success = await register(formData.name, formData.email, formData.password);
     if (success) {
-      navigate('/login?verify=true');
+      navigate('/dashboard');
     }
   };
 

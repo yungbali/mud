@@ -1,5 +1,7 @@
 import { signIn, signUp } from 'aws-amplify/auth';
 import { useState } from 'react';
+import axios from 'axios';
+import { BASEURL } from '../lib/constants';
 
 export function useAuthFlow() {
   const [loading, setLoading] = useState(false);
@@ -18,22 +20,25 @@ export function useAuthFlow() {
   };
 
   const register = async (name: string, email: string, password: string) => {
-    setLoading(true);
-    setError(null);
     try {
-      await signUp({
-        username: email,
-        password,
-        options: {
-          userAttributes: {
-            name,
-            email
-          }
-        }
+      setLoading(true);
+      const response = await axios.post(`${BASEURL}/auth/register`, {
+        name,
+        email,
+        password
       });
-      return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to sign up');
+      
+      if (response.data.token) {
+        localStorage.setItem("musette-jwt", response.data.token);
+        return true;
+      }
+      return false;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Registration failed');
+      } else {
+        setError('Registration failed');
+      }
       return false;
     } finally {
       setLoading(false);

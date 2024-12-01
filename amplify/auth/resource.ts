@@ -1,18 +1,19 @@
-import { defineAuth } from '@aws-amplify/backend';
+export type AuthConfig = {
+  Auth: {
+    Cognito: {
+      userPoolId: string;
+      userPoolClientId: string;
+      signUpVerificationMethod: 'code';
+    };
+  };
+};
 
-/**
- * Define and configure your auth resource
- * @see https://docs.amplify.aws/gen2/build-a-backend/auth
- */
-export const auth = defineAuth({
-  loginWith: {
-    email: true,
-    phone: undefined
-  },
-  userAttributes: {
-    email: {
-      required: true,
-      mutable: true
+export const authConfig: AuthConfig = {
+  Auth: {
+    Cognito: {
+      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || 'your-user-pool-id',
+      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || 'your-client-id',
+      signUpVerificationMethod: 'code'
     }
   }
-});
+};

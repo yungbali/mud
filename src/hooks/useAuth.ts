@@ -1,10 +1,12 @@
 import { signIn, signUp, signOut, getCurrentUser, type SignUpInput } from 'aws-amplify/auth';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function useAuth() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     checkUser();
@@ -14,6 +16,7 @@ export function useAuth() {
     try {
       const userData = await getCurrentUser();
       setUser(userData);
+      navigate('/app');
     } catch (err) {
       setUser(null);
     } finally {
@@ -35,11 +38,18 @@ export function useAuth() {
     }
   }
 
-  async function register(input: SignUpInput) {
+  async function register(name: string, email: string, password: string) {
     setLoading(true);
     setError(null);
     try {
-      await signUp(input);
+      await signUp({
+        username: email,
+        password,
+        options: {
+          userAttributes: { name, email }
+        }
+      });
+      navigate('/login?verify=true');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
       throw err;
@@ -48,25 +58,5 @@ export function useAuth() {
     }
   }
 
-  async function logout() {
-    setLoading(true);
-    try {
-      await signOut();
-      setUser(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Logout failed');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return {
-    user,
-    loading,
-    error,
-    login,
-    register,
-    logout,
-    checkUser
-  };
+  return { user, loading, error, login, register, logout: signOut };
 }

@@ -86,13 +86,31 @@ export default function Component() {
     }
   ]
 
-  const handleOnboardingNext = () => {
+  const [selectedOptions, setSelectedOptions] = useState({
+    userType: '',
+    goals: [] as string[]
+  });
+
+  const handleOnboardingNext = async () => {
     if (onboardingStep < onboardingSteps.length - 1) {
-      setOnboardingStep(onboardingStep + 1)
+      setOnboardingStep(onboardingStep + 1);
     } else {
-      setScreen('dashboard')
+      try {
+        // Save onboarding preferences to backend
+        await axios.post(`${BASEURL}/user/preferences`, {
+          userType: selectedOptions.userType,  // From step 2
+          goals: selectedOptions.goals,        // From step 3
+        }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("musette-jwt")}`
+          }
+        });
+        setScreen('dashboard');
+      } catch (err) {
+        setError('Failed to save preferences');
+      }
     }
-  }
+  };
 
   useEffect(() => {
     const pattern = document.createElement('img')
@@ -199,11 +217,25 @@ export default function Component() {
             </div>
             {onboardingSteps[onboardingStep].options && (
               <div className="grid grid-cols-2 gap-4">
-                {onboardingSteps[onboardingStep].options.map((option, index) => (
+                {onboardingSteps[onboardingStep].options?.map((option, index) => (
                   <Button
                     key={index}
                     variant="outline"
-                    className="border-[#9D5465] text-[#9D5465] hover:bg-[#9D5465] hover:text-white"
+                    className={`border-[#9D5465] text-[#9D5465] hover:bg-[#9D5465] hover:text-white 
+                      ${onboardingStep === 1 && selectedOptions.userType === option ? 'bg-[#9D5465] text-white' : ''}
+                      ${onboardingStep === 2 && selectedOptions.goals.includes(option) ? 'bg-[#9D5465] text-white' : ''}`}
+                    onClick={() => {
+                      if (onboardingStep === 1) {
+                        setSelectedOptions(prev => ({ ...prev, userType: option }));
+                      } else if (onboardingStep === 2) {
+                        setSelectedOptions(prev => ({
+                          ...prev,
+                          goals: prev.goals.includes(option) 
+                            ? prev.goals.filter(g => g !== option)
+                            : [...prev.goals, option]
+                        }));
+                      }
+                    }}
                   >
                     {option}
                   </Button>
