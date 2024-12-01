@@ -1,10 +1,17 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
-import config from '../../amplify_outputs.json';
+import config from '../../amplify/config.json';
 
-// Configure Amplify globally
-Amplify.configure(config);
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolClientId: 'COGNITO_APP_CLIENT_ID',
+      userPoolId: 'COGNITO_USER_POOL_ID',
+      signUpVerificationMethod: 'code'
+    }
+  }
+});
 
 // Create a typed client for data operations
 export const client = generateClient<Schema>();

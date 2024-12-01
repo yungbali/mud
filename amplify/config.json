@@ -2,5 +2,12 @@
   "aws_project_region": "us-east-1",
   "aws_cognito_region": "us-east-1",
   "aws_user_pools_id": "COGNITO_USER_POOL_ID",
-  "aws_user_pools_web_client_id": "COGNITO_APP_CLIENT_ID"
+  "aws_user_pools_web_client_id": "COGNITO_APP_CLIENT_ID",
+  "auth": {
+    "Cognito": {
+      "region": "us-east-1",
+      "userPoolId": "COGNITO_USER_POOL_ID",
+      "userPoolClientId": "COGNITO_APP_CLIENT_ID"
+    }
+  }
 } 
