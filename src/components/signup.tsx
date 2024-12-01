@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuthFlow } from '../hooks/useAuthFlow';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Input } from './ui/input';
@@ -10,6 +11,7 @@ import { Alert, AlertDescription } from './ui/alert';
 import { LucideLoaderCircle } from 'lucide-react';
 
 export default function SignupScreen() {
+  const navigate = useNavigate();
   const { register, loading, error } = useAuthFlow();
   const [formData, setFormData] = useState({
     name: '',
@@ -19,7 +21,10 @@ export default function SignupScreen() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await register(formData.name, formData.email, formData.password);
+    const success = await register(formData.name, formData.email, formData.password);
+    if (success) {
+      navigate('/login?verify=true');
+    }
   };
 
   return (
@@ -77,6 +82,12 @@ export default function SignupScreen() {
               Sign Up
             </Button>
           </form>
+          <div className="text-center mt-4">
+            <span className="text-sm text-gray-600">Already have an account? </span>
+            <Link to="/login" className="text-[#8A4757] hover:underline">
+              Sign in
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>
