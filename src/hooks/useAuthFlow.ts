@@ -31,8 +31,10 @@ export function useAuthFlow() {
           }
         }
       });
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign up');
+      return false;
     } finally {
       setLoading(false);
     }
