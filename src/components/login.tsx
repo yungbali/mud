@@ -67,13 +67,13 @@ export default function LoginScreen() {
               ) : null}
               Sign In
             </Button>
-            <div className="text-center mt-4">
-              <span className="text-sm text-gray-600">Don't have an account? </span>
-              <Link to="/signup" className="text-[#8A4757] hover:underline">
-                Sign up
-              </Link>
-            </div>
           </form>
+          <div className="text-center mt-4">
+            <span className="text-sm text-gray-600">Don't have an account? </span>
+            <Link to="/signup" className="text-[#8A4757] hover:underline">
+              Sign up
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>
