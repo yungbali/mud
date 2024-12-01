@@ -1,9 +1,6 @@
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import AppFlow from './app-flow';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginScreen from './components/login';
 import SignupScreen from './components/signup';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import './App.css';
 
 function App() {
   return (
@@ -11,14 +8,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/signup" element={<SignupScreen />} />
-        <Route 
-          path="/" 
-          element={
-            <ProtectedRoute>
-              <AppFlow />
-            </ProtectedRoute>
-          } 
-        />
+        <Route path="/" element={<LoginScreen />} />
       </Routes>
     </BrowserRouter>
   );
